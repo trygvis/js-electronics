@@ -49,19 +49,30 @@ function UriCalculator() {
         switch(calculateFor) {
             case "u":
                 if(r > 0 && i > 0) {
-                    return { "u" : r * i }
+                    return { 
+                        "u" : r * i,
+                        "formula" : "$$U = R * I$$"
+                    }
                 }
                 return {}
             case "r":
                 if(u > 0 && i > 0) {
                     var r = u / i
                     var closest = this.findClosest(r, e12)
-                    return { "r" : r, "closestLower" : closest[0], "closestHigher" : closest[1] }
+                    return {
+                        "r" : r,
+                        "closestLower" : closest[0],
+                        "closestHigher" : closest[1],
+                        "formula" : "\\(R = U / I\\)"
+                    }
                 }
                 return {}
             case "i": 
                 if(u > 0 && r > 0) {
-                    return { "i" : u / r }
+                    return {
+                        "i" : u / r,
+                        "formula" : "$$I = U / R$$"
+                    }
                 }
                 return {}
         }
@@ -107,21 +118,29 @@ $(document).ready(function() {
 
     var closestLower = jQuery("#uri-closest-lower")
     var closestHigher = jQuery("#uri-closest-higher")
+    var formula = jQuery("#uri-formula")
 
     var updateUri = function() {
-        calculateFor = jQuery("#uri-calculate-for:checked").val()
+        calculateFor = jQuery("#uri :checked").val()
         var u = parseVolt(inputU.val())
         var r = parseFloat(inputR.val())
         var i = parseAmpere(inputI.val())
 
+        console.log("updateUri")
         var result = uriCalculator.solve(calculateFor, u, r, i)
         for (key in result) {
+            var value = result[key]
+            console.log("key=" + key)
             switch(key) {
-                case "u": inputU.val(result[key]); break
-                case "r": inputR.val(Math.round(result[key])); break
-                case "i": inputI.val(result[key]); break
-                case "closestLower": closestLower.html(result[key]); break
-                case "closestHigher": closestHigher.html(result[key]); break
+                case "u": inputU.val(value); break
+                case "r": inputR.val(Math.round(value)); break
+                case "i": inputI.val(value); break
+                case "closestLower": closestLower.html(value); break
+                case "closestHigher": closestHigher.html(value); break
+                case "formula": 
+                    formula.html(value);
+                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("uri-formula")])
+                break
             }
         }
     }
@@ -129,6 +148,7 @@ $(document).ready(function() {
     inputU.keyup(updateUri)
     inputR.keyup(updateUri)
     inputI.keyup(updateUri)
+    jQuery("#uri input[name='calculate-for']").click(updateUri)
 
     updateUri()
 })

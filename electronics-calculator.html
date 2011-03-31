@@ -1,12 +1,24 @@
 <html>
 <head>
-<script type="text/javascript" src="functional.min.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+});
+</script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!--
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="mathjax-MathJax-5a7e4d7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+-->
+
+<script type="text/javascript" src="functional.min.js"></script>
 <script type="text/javascript" src="electronics-calculator.js"></script>
+
 </head>
 <body>
-    <h2>U = R * I</h2>
-    <form>
+    <h2>Ohms Law</h2>
+    <form id="uri">
         <table>
             <tr>
                 <td></td>
@@ -16,25 +28,28 @@
                 <td></td>
             </tr>
             <tr>
-                <td>U</td>
+                <td>\(U\)</td>
                 <td><input id="uri-u" name="uri-u" tabindex="1" value="5"/></td>
                 <td>V</td>
-                <td><input type="radio" id="uri-calculate-for" name="calculate-for" value="u"/></td>
+                <td><input type="radio" name="calculate-for" value="u"/></td>
             </tr>
             <tr>
-                <td>R</td>
+                <td>\(R\)</td>
                 <td><input id="uri-r" name="uri-r" tabindex="2"/></td>
                 <td>&ohm;</td>
-                <td><input type="radio" id="uri-calculate-for" name="calculate-for" value="r" checked=""/></td>
+                <td><input type="radio" name="calculate-for" value="r" checked=""/></td>
                 <td>
                     Closest E12 values: <span id="uri-closest-lower">-</span>&ohm;, <span id="uri-closest-higher">-</span>&ohm;
                 </td>
             </tr>
             <tr>
-                <td>I</td>
+                <td>\(I\)</td>
                 <td><input id="uri-i" name="uri-i" tabindex="3" value="10m"/></td>
                 <td>A</td>
-                <td><input type="radio" id="uri-calculate-for" name="calculate-for" value="i"/></td>
+                <td><input type="radio" name="calculate-for" value="i"/></td>
+            </tr>
+            <tr>
+                <td colspan="4">Formula: <span id="uri-formula"></span></td>
             </tr>
         </table>
     <form>
