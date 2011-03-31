@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>Electronics Calculator - Ohm's law</title>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!--
+<script type="text/javascript" src="jquery-1.5.2.js"></script>
+<script type="text/javascript" src="mathjax-MathJax-5a7e4d7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+-->
+<script type="text/javascript" src="functional.min.js"></script>
+<script type="text/javascript" src="electronics-calculator.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var electronics = new Electronics()
+    var resistorCalculator = new ResistorCalculator()
+    var uriCalculator = new UriCalculator()
+
+    var inputU = jQuery("#uri-u")
+    var inputR = jQuery("#uri-r")
+    var inputI = jQuery("#uri-i")
+
+    var closestLower = jQuery("#uri-closest-lower")
+    var closestVoltage = jQuery("#uri-closest-voltage")
+    var closestCurrent = jQuery("#uri-closest-current")
+    var closestLowerVoltage = jQuery("#uri-closest-lower-voltage")
+    var closestLowerCurrent = jQuery("#uri-closest-lower-current")
+    var closestHigherVoltage = jQuery("#uri-closest-higher-voltage")
+    var closestHigherCurrent = jQuery("#uri-closest-higher-current")
+    var closestHigher = jQuery("#uri-closest-higher")
+    var formula = jQuery("#uri-formula")
+
+    var findResistorA = jQuery("#find-resistor")
+
+    var updateUri = function() {
+        calculateFor = jQuery("#uri :checked").val()
+        var u = electronics.parseV(inputU.val())
+        var r = electronics.parseR(inputR.val())
+        var i = electronics.parseA(inputI.val())
+
+        console.log("URI Calculation: solving for " + calculateFor + ", inputs: u=" + u + ", r=" + r + ", i=" + i);
+        var result = uriCalculator.solve(calculateFor, u, r, i)
+        for (key in result) {
+            var value = result[key]
+            switch(key) {
+                case "u": inputU.val(value); break
+                case "r": inputR.val(Math.round(value)); break
+                case "i": inputI.val(value); break
+                case "formula": 
+                    formula.html(value);
+                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("uri-formula")])
+                break
+            }
+        }
+
+        if(calculateFor == "r") {
+            r = result["r"]             // Update R
+            var closest = resistorCalculator.findClosest(r)
+            closestLower.html(electronics.printResistance(closest[0]))
+            closestHigher.html(electronics.printResistance(closest[1]))
+
+            closestVoltage.html(electronics.printVoltage(u))
+            closestCurrent.html(electronics.printAmpere(i))
+
+            closestLowerVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, closest[0], i)["u"]))
+            closestLowerCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, closest[0], 0)["i"]))
+
+            closestHigherVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, closest[1], i)["u"]))
+            closestHigherCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, closest[1], 0)["i"]))
+
+            findResistorA.
+                attr("href", "find-resistor.html?r=" + r + "&u=" + u + "&i=" + i).
+                show()
+        }
+    }
+
+    inputU.keyup(updateUri)
+    inputR.keyup(updateUri)
+    inputI.keyup(updateUri)
+    jQuery("#uri input[name='calculate-for']").click(updateUri)
+
+    updateUri()
+})
+</script>
+</head>
+<body>
+    <h2>Ohms Law</h2>
+    <form id="uri">
+        <table>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Calculate for</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>\(U\)</td>
+                <td><input id="uri-u" name="uri-u" tabindex="1" value="5"/></td>
+                <td>V</td>
+                <td><input type="radio" name="calculate-for" value="u"/></td>
+            </tr>
+            <tr>
+                <td>\(R\)</td>
+                <td><input id="uri-r" name="uri-r" tabindex="2"/></td>
+                <td>&Omega;</td>
+                <td><input type="radio" name="calculate-for" value="r" checked=""/></td>
+            </tr>
+            <tr>
+                <td>\(I\)</td>
+                <td><input id="uri-i" name="uri-i" tabindex="3" value="10m"/></td>
+                <td>A</td>
+                <td><input type="radio" name="calculate-for" value="i"/></td>
+            </tr>
+            <tr>
+                <td colspan="4">Formula: <span id="uri-formula"></span></td>
+            </tr>
+        </table>
+    </form>
+    <a style="display: none" id="find-resistor" href="">Find suitable resistor</a>
+</body>
+</html>

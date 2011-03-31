@@ -7,7 +7,7 @@ function Electronics() {
     this.parseUnit = function(s, unit) {
         s = s.replace(/ /g, "")
 
-        if(s.match(new RegExp(unit + "$"))) {
+        if(unit != null && s.match(new RegExp(unit + "$"))) {
             s = s.substr(0, s.length - unit.length)
         }
 
@@ -28,22 +28,38 @@ function Electronics() {
             s = s.substr(0, s.length - 1)
             factor = 1/1000
         }
+        else if(s.match(/.*k$/)) {
+            s = s.substr(0, s.length - 1)
+            factor = 1000
+        }
+        else if(s.match(/.*M$/)) {
+            s = s.substr(0, s.length - 1)
+            factor = 1000000
+        }
+        else if(s.match(/.*G$/)) {
+            s = s.substr(0, s.length - 1)
+            factor = 1000000000
+        }
 
         var value = parseFloat(s)
 
         if(isNaN(value)) {
-            return false;
+            return NaN;
         }
 
         return value * factor;
     }
 
-    this.parseVoltage = function(s) {
+    this.parseV = function(s) {
         return this.parseUnit(s, "V")
     }
 
-    this.parseAmpere = function(s) {
+    this.parseA = function(s) {
         return this.parseUnit(s, "A")
+    }
+
+    this.parseR = function(s) {
+        return this.parseUnit(s)
     }
 
     this.printWithUnit = function(value, unit) {
@@ -143,68 +159,3 @@ function UriCalculator() {
         }
     }
 }
-
-$(document).ready(function() {
-    var electronics = new Electronics()
-    var resistorCalculator = new ResistorCalculator()
-    var uriCalculator = new UriCalculator()
-
-    var inputU = jQuery("#uri-u")
-    var inputR = jQuery("#uri-r")
-    var inputI = jQuery("#uri-i")
-
-    var closestLower = jQuery("#uri-closest-lower")
-    var closestVoltage = jQuery("#uri-closest-voltage")
-    var closestCurrent = jQuery("#uri-closest-current")
-    var closestLowerVoltage = jQuery("#uri-closest-lower-voltage")
-    var closestLowerCurrent = jQuery("#uri-closest-lower-current")
-    var closestHigherVoltage = jQuery("#uri-closest-higher-voltage")
-    var closestHigherCurrent = jQuery("#uri-closest-higher-current")
-    var closestHigher = jQuery("#uri-closest-higher")
-    var formula = jQuery("#uri-formula")
-
-    var updateUri = function() {
-        calculateFor = jQuery("#uri :checked").val()
-        var u = electronics.parseVoltage(inputU.val())
-        var r = parseFloat(inputR.val())
-        var i = electronics.parseAmpere(inputI.val())
-
-        console.log("URI Calculation: solving for " + calculateFor + ", inputs: u=" + u + ", r=" + r + ", i=" + i);
-        var result = uriCalculator.solve(calculateFor, u, r, i)
-        for (key in result) {
-            var value = result[key]
-            switch(key) {
-                case "u": inputU.val(value); break
-                case "r": inputR.val(Math.round(value)); break
-                case "i": inputI.val(value); break
-                case "formula": 
-                    formula.html(value);
-                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("uri-formula")])
-                break
-            }
-        }
-
-        if(calculateFor == "r") {
-            r = result["r"]             // Update R
-            var closest = resistorCalculator.findClosest(r)
-            closestLower.html(electronics.printResistance(closest[0]))
-            closestHigher.html(electronics.printResistance(closest[1]))
-
-            closestVoltage.html(electronics.printVoltage(u))
-            closestCurrent.html(electronics.printAmpere(i))
-
-            closestLowerVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, closest[0], i)["u"]))
-            closestLowerCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, closest[0], 0)["i"]))
-
-            closestHigherVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, closest[1], i)["u"]))
-            closestHigherCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, closest[1], 0)["i"]))
-        }
-    }
-
-    inputU.keyup(updateUri)
-    inputR.keyup(updateUri)
-    inputI.keyup(updateUri)
-    jQuery("#uri input[name='calculate-for']").click(updateUri)
-
-    updateUri()
-})

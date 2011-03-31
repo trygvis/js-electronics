@@ -1,0 +1,116 @@
+<html>
+<head>
+<title>Electronics Calculator - Find Resistor</title>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!--
+<script type="text/javascript" src="jquery-1.5.2.js"></script>
+<script type="text/javascript" src="mathjax-MathJax-5a7e4d7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+-->
+<script type="text/javascript" src="functional.min.js"></script>
+<script type="text/javascript" src="electronics-calculator.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var electronics = new Electronics()
+    var resistorCalculator = new ResistorCalculator()
+    var uriCalculator = new UriCalculator()
+
+    var inputR = jQuery("#r")
+    var inputU = jQuery("#u")
+    var inputI = jQuery("#i")
+
+    var closestLower = jQuery("#closest-lower")
+    var closestVoltage = jQuery("#closest-voltage")
+    var closestCurrent = jQuery("#closest-current")
+    var closestLowerVoltage = jQuery("#closest-lower-voltage")
+    var closestLowerCurrent = jQuery("#closest-lower-current")
+    var closestHigherVoltage = jQuery("#closest-higher-voltage")
+    var closestHigherCurrent = jQuery("#closest-higher-current")
+    var closestHigher = jQuery("#closest-higher")
+
+    var updateFields = function() {
+        r = electronics.parseR(inputR.val())
+        u = electronics.parseV(inputU.val())
+        i = electronics.parseA(inputI.val())
+        if(isNaN(r)) {
+            return
+        }
+
+        var closest = resistorCalculator.findClosest(r)
+        var l = closest[0]
+        var h = closest[1]
+        closestLower.html(electronics.printResistance(l))
+        closestHigher.html(electronics.printResistance(h))
+
+        if(!isNaN(i)) {
+            closestCurrent.html(electronics.printAmpere(i))
+            closestLowerVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, l, i)["u"]))
+            closestHigherVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, h, i)["u"]))
+        }
+
+        if(!isNaN(u)) {
+            closestVoltage.html(electronics.printVoltage(u))
+            closestLowerCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, l, 0)["i"]))
+            closestHigherCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, h, 0)["i"]))
+        }
+    }
+
+    inputR.keyup(updateFields)
+    inputU.keyup(updateFields)
+    inputI.keyup(updateFields)
+    updateFields()
+})
+</script>
+</head>
+<body>
+<h1>Find Best Resistor</h1>
+<form>
+    <table>
+        <tr>
+            <td>\(R\)</td>
+            <td><input id="r" name="r" value="105"/></td>
+            <td>&Omega;</td>
+        </tr>
+        <tr>
+            <td>\(U\)</td>
+            <td><input id="u" name="u" value="5"/></td>
+            <td>V</td>
+        </tr>
+        <tr>
+            <td>\(I\)</td>
+            <td><input id="i" name="i"/></td>
+            <td>A</td>
+        </tr>
+    <table>
+</form>
+<table>
+    <tr>
+        <td colspan="3"></td>
+        <td>V@<span id="closest-current"></span></td>
+        <td>A@<span id="closest-voltage"></span></td>
+    </tr>
+    <tr>
+        <td>Lower</td>
+        <td><span id="closest-lower">-</span></td>
+        <td> =&gt; </td>
+        <td><span id="closest-lower-voltage">-</span></td>
+        <td><span id="closest-lower-current">-</span></td>
+    </tr>
+    <tr>
+        <td>Higher</td>
+        <td><span id="closest-higher">-</span></td>
+        <td> =&gt; </td>
+        <td><span id="closest-higher-voltage">-</span></td>
+        <td><span id="closest-higher-current">-</span></td>
+    </tr>
+</table>
+<p>
+Decade table: E12
+</p>
+</body>
+</html>
