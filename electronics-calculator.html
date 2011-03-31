@@ -1,0 +1,42 @@
+<html>
+<head>
+<script type="text/javascript" src="functional.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="electronics-calculator.js"></script>
+</head>
+<body>
+    <h2>U = R * I</h2>
+    <form>
+        <table>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Calculate for</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>U</td>
+                <td><input id="uri-u" name="uri-u" tabindex="1" value="5"/></td>
+                <td>V</td>
+                <td><input type="radio" id="uri-calculate-for" name="calculate-for" value="u"/></td>
+            </tr>
+            <tr>
+                <td>R</td>
+                <td><input id="uri-r" name="uri-r" tabindex="2"/></td>
+                <td>&ohm;</td>
+                <td><input type="radio" id="uri-calculate-for" name="calculate-for" value="r" checked=""/></td>
+                <td>
+                    Closest E12 values: <span id="uri-closest-lower">-</span>&ohm;, <span id="uri-closest-higher">-</span>&ohm;
+                </td>
+            </tr>
+            <tr>
+                <td>I</td>
+                <td><input id="uri-i" name="uri-i" tabindex="3" value="10m"/></td>
+                <td>A</td>
+                <td><input type="radio" id="uri-calculate-for" name="calculate-for" value="i"/></td>
+            </tr>
+        </table>
+    <form>
+</body>
+</html>
