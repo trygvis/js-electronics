@@ -78,12 +78,21 @@ jQuery(document).ready(function() {
         }
     }
 
+    function updateCalculateFor() {
+        calculateFor = jQuery("#uri :checked").val()
+
+        inputU.attr("readonly", calculateFor == "u")
+        inputR.attr("readonly", calculateFor == "r")
+        inputI.attr("readonly", calculateFor == "i")
+    }
+
     inputU.keyup(updateUri)
     inputR.keyup(updateUri)
     inputI.keyup(updateUri)
-    jQuery("#uri input[name='calculate-for']").click(updateUri)
+    jQuery("#uri input[name='calculate-for']").click(updateCalculateFor)
 
     updateUri()
+    updateCalculateFor()
 })
 </script>
 </head>
