@@ -92,6 +92,20 @@ function Electronics() {
     this.printVoltage = function(v) { return this.printWithUnit(v, "V") }
     this.printAmpere = function(i) { return this.printWithUnit(i, "A") }
     this.printResistance = function(r) { return this.printWithUnit(r, "&Omega;") }
+
+    // ------------------------------------------------------------------------
+    // Utils
+
+    this.queryParams = {};
+
+    var e,
+        a = /\+/g,  // Regex for replacing addition symbol with a space
+        r = /([^&=]+)=?([^&]*)/g,
+        d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+        q = window.location.search.substring(1);
+
+    while (e = r.exec(q))
+       this.queryParams[d(e[1])] = d(e[2]);
 }
 
 function ResistorCalculator() {

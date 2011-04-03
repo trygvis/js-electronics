@@ -24,14 +24,6 @@ jQuery(document).ready(function() {
     var inputR = jQuery("#uri-r")
     var inputI = jQuery("#uri-i")
 
-    var closestLower = jQuery("#uri-closest-lower")
-    var closestVoltage = jQuery("#uri-closest-voltage")
-    var closestCurrent = jQuery("#uri-closest-current")
-    var closestLowerVoltage = jQuery("#uri-closest-lower-voltage")
-    var closestLowerCurrent = jQuery("#uri-closest-lower-current")
-    var closestHigherVoltage = jQuery("#uri-closest-higher-voltage")
-    var closestHigherCurrent = jQuery("#uri-closest-higher-current")
-    var closestHigher = jQuery("#uri-closest-higher")
     var formula = jQuery("#uri-formula")
 
     var findResistorA = jQuery("#find-resistor")
@@ -55,26 +47,6 @@ jQuery(document).ready(function() {
                     MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("uri-formula")])
                 break
             }
-        }
-
-        if(calculateFor == "r") {
-            r = result["r"]             // Update R
-            var closest = resistorCalculator.findClosest(r)
-            closestLower.html(electronics.printResistance(closest[0]))
-            closestHigher.html(electronics.printResistance(closest[1]))
-
-            closestVoltage.html(electronics.printVoltage(u))
-            closestCurrent.html(electronics.printAmpere(i))
-
-            closestLowerVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, closest[0], i)["u"]))
-            closestLowerCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, closest[0], 0)["i"]))
-
-            closestHigherVoltage.html(electronics.printVoltage(uriCalculator.solve("u", 0, closest[1], i)["u"]))
-            closestHigherCurrent.html(electronics.printAmpere(uriCalculator.solve("i", u, closest[1], 0)["i"]))
-
-            findResistorA.
-                attr("href", "find-resistor.html?r=" + r + "&u=" + u + "&i=" + i).
-                show()
         }
     }
 

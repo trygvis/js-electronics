@@ -24,14 +24,14 @@ jQuery(document).ready(function() {
     var inputU = jQuery("#u")
     var inputI = jQuery("#i")
 
-    var closestLower = jQuery("#closest-lower")
+    var closestLower = jQuery(".closest-lower")
+    var closestHigher = jQuery(".closest-higher")
     var closestVoltage = jQuery("#closest-voltage")
     var closestCurrent = jQuery("#closest-current")
     var closestLowerVoltage = jQuery("#closest-lower-voltage")
     var closestLowerCurrent = jQuery("#closest-lower-current")
     var closestHigherVoltage = jQuery("#closest-higher-voltage")
     var closestHigherCurrent = jQuery("#closest-higher-current")
-    var closestHigher = jQuery("#closest-higher")
 
     var updateFields = function() {
         r = electronics.parseR(inputR.val())
@@ -63,6 +63,15 @@ jQuery(document).ready(function() {
     inputR.keyup(updateFields)
     inputU.keyup(updateFields)
     inputI.keyup(updateFields)
+
+    // Load the form from the query
+    r = electronics.queryParams["r"]
+    u = electronics.queryParams["u"]
+    i = electronics.queryParams["i"]
+    if(!isNaN(r)) inputR.val(r)
+    if(!isNaN(u)) inputU.val(u)
+    if(!isNaN(i)) inputI.val(i)
+
     updateFields()
 })
 </script>
@@ -70,47 +79,47 @@ jQuery(document).ready(function() {
 <body>
 <h1>Find Best Resistor</h1>
 <form>
-    <table>
-        <tr>
-            <td>\(R\)</td>
-            <td><input id="r" name="r" value="105"/></td>
-            <td>&Omega;</td>
-        </tr>
-        <tr>
-            <td>\(U\)</td>
-            <td><input id="u" name="u" value="5"/></td>
-            <td>V</td>
-        </tr>
-        <tr>
-            <td>\(I\)</td>
-            <td><input id="i" name="i"/></td>
-            <td>A</td>
-        </tr>
-    <table>
-</form>
-<table>
-    <tr>
-        <td colspan="3"></td>
+The target resistance: <input id="r" name="r" value="105"/>&Omega;<br/>
+<ul>
+    <li>Closest lower: <span class="closest-lower">-</span></li>
+    <li>Closest higher: <span class="closest-higher">-</span></li>
+</ul>
+Resistor table: E12
+<hr/>
+<p>
+If you know the voltage over the resistor, calculate the current:
+</p>
+\(U\)=<input id="u" name="u" value="5"/>V
+<ul>
+    <li><span id="closest-lower-current">-</span> at <span class="closest-lower">-</span></li>
+    <li><span id="closest-higher-current">-</span> at <span class="closest-higher">-</span></li>
+</ul>
+<hr/>
+<p>
+If you know the current through the resistor, calculate the voltage drop:
+</p>
+\(I\)=<input id="i" name="i"/>A
+<ul>
+    <li><span id="closest-lower-voltage">-</span> at <span class="closest-lower">-</span></li>
+    <li><span id="closest-higher-voltage">-</span> at <span class="closest-higher">-</span></li>
+</ul>
+        <!--
         <td>V@<span id="closest-current"></span></td>
         <td>A@<span id="closest-voltage"></span></td>
-    </tr>
-    <tr>
+
         <td>Lower</td>
-        <td><span id="closest-lower">-</span></td>
+        <td></td>
         <td> =&gt; </td>
-        <td><span id="closest-lower-voltage">-</span></td>
+        <td></td>
         <td><span id="closest-lower-current">-</span></td>
-    </tr>
-    <tr>
+
         <td>Higher</td>
-        <td><span id="closest-higher">-</span></td>
+        <td></td>
         <td> =&gt; </td>
-        <td><span id="closest-higher-voltage">-</span></td>
+        <td></td>
         <td><span id="closest-higher-current">-</span></td>
-    </tr>
-</table>
-<p>
-Decade table: E12
-</p>
+        -->
+
+</form>
 </body>
 </html>
