@@ -116,7 +116,7 @@ function Electronics() {
         do {
             var c = Math.floor((value % radix))
             s.splice(0, 0, alphabet[c])
-        } while((value /= radix) > 1)
+        } while(Math.floor(value /= radix) > 0)
 
         return s.join("")
     }
