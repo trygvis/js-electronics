@@ -50,17 +50,32 @@ function Electronics() {
         return value * factor;
     }
 
-    this.parseV = function(s) {
-        return this.parseUnit(s, "V")
+    this.parseBinary = function(s) { return this.parseWithRadix(s, 2) }
+    this.parseOctal = function(s) { return this.parseWithRadix(s, 8) }
+    this.parseHex = function(s) { return this.parseWithRadix(s, 16) }
+
+    this.parseWithRadix = function(s, radix) {
+        var alphabet = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+        var factor = 1
+        var num = 0
+
+        for(i = s.length - 1; i >= 0; i--) {
+            var c = s.charAt(i)
+            for(j in alphabet) {
+                if(c == alphabet[j]) {
+                    num += j * factor
+                }
+            }
+
+            factor *= radix
+        }
+
+        return num
     }
 
-    this.parseA = function(s) {
-        return this.parseUnit(s, "A")
-    }
-
-    this.parseR = function(s) {
-        return this.parseUnit(s)
-    }
+    this.parseV = function(s) { return this.parseUnit(s, "V") }
+    this.parseA = function(s) { return this.parseUnit(s, "A") }
+    this.parseR = function(s) { return this.parseUnit(s) }
 
     this.printWithUnit = function(value, unit) {
         if(isNaN(value)) {
@@ -88,6 +103,27 @@ function Electronics() {
 
         return value.toPrecision(3) + unit
     }
+
+    this.printInRadix = function(value, radix) {
+        var alphabet = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+        var negative = false
+        if(value < 0) {
+            negative = true
+            value = -value;
+        }
+
+        var s = new Array
+        do {
+            var c = Math.floor((value % radix))
+            s.splice(0, 0, alphabet[c])
+        } while((value /= radix) > 1)
+
+        return s.join("")
+    }
+
+    this.printBinary = function(value) { return this.printInRadix(value, 2) }
+    this.printOctal = function(value) { return this.printInRadix(value, 8) }
+    this.printHex = function(value) { return this.printInRadix(value, 16) }
 
     this.printVoltage = function(v) { return this.printWithUnit(v, "V") }
     this.printAmpere = function(i) { return this.printWithUnit(i, "A") }
