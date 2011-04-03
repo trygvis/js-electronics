@@ -61,10 +61,16 @@ function Electronics() {
 
         for(i = s.length - 1; i >= 0; i--) {
             var c = s.charAt(i)
+            var found = false
             for(j in alphabet) {
-                if(c == alphabet[j]) {
+                if(j < radix && c == alphabet[j]) {
                     num += j * factor
+                    found = true
+                    break
                 }
+            }
+            if(!found) {
+                return NaN
             }
 
             factor *= radix
