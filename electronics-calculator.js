@@ -107,7 +107,7 @@ function Electronics() {
             return Math.round(value / 1000) + "k" + unit
         }
 
-        return value.toPrecision(3) + unit
+        return "\\(" + value.toPrecision(3) + unit + "\\)"
     }
 
     this.printInRadix = function(value, radix) {
@@ -134,6 +134,7 @@ function Electronics() {
     this.printVoltage = function(v) { return this.printWithUnit(v, "V") }
     this.printAmpere = function(i) { return this.printWithUnit(i, "A") }
     this.printResistance = function(r) { return this.printWithUnit(r, "&Omega;") }
+    this.printPower = function(r) { return this.printWithUnit(r, "W") }
 
     // ------------------------------------------------------------------------
     // Utils
@@ -194,22 +195,28 @@ function ParallelResistors() {
     }
 }
 
-function UriCalculator() {
+/**
+ * Calculator for ohms law "U = R * I"
+ */
+function OhmsLaw() {
     this.solve = function(calculateFor, u, r, i) {
         switch(calculateFor) {
             case "u":
-                return { 
-                    "u" : (r > 0 && i > 0) ? r * i : NaN,
+                return u = (r > 0 && i > 0) ? r * i : NaN, { 
+                    "u" : u,
+                    "p" : isNaN(u) ? NaN : u * i,
                     "formula" : "\\(U = R * I\\)"
                 }
             case "r":
                 return {
                     "r" : (u > 0 && i > 0) ? u / i : NaN,
+                    "p" : isNaN(r) ? NaN : u * i,
                     "formula" : "\\(R = U / I\\)"
                 }
             case "i": 
-                return {
-                    "i" : (u > 0 && r > 0) ?  i = u / r : NaN,
+                return i = (u > 0 && r > 0) ?  i = u / r : NaN, {
+                    "i" : i,
+                    "p" : isNaN(i) ? NaN : u * i,
                     "formula" : "\\(I = U / R\\)"
                 }
         }

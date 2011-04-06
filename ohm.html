@@ -18,33 +18,35 @@ MathJax.Hub.Config({
 jQuery(document).ready(function() {
     var electronics = new Electronics()
     var resistorCalculator = new ResistorCalculator()
-    var uriCalculator = new UriCalculator()
+    var ohmsLaw = new OhmsLaw()
 
-    var inputU = jQuery("#uri-u")
-    var inputR = jQuery("#uri-r")
-    var inputI = jQuery("#uri-i")
+    var inputU = jQuery("#u")
+    var inputR = jQuery("#r")
+    var inputI = jQuery("#i")
+    var p = jQuery("#p")
 
-    var formula = jQuery("#uri-formula")
+    var formula = jQuery("#formula")
 
     var findResistorA = jQuery("#find-resistor")
 
-    var updateUri = function() {
+    var updateCalculations = function() {
         calculateFor = jQuery("#uri :checked").val()
         var u = electronics.parseV(inputU.val())
         var r = electronics.parseR(inputR.val())
         var i = electronics.parseA(inputI.val())
 
-        console.log("URI Calculation: solving for " + calculateFor + ", inputs: u=" + u + ", r=" + r + ", i=" + i);
-        var result = uriCalculator.solve(calculateFor, u, r, i)
+        console.log("Ohms law: solving for " + calculateFor + ", inputs: u=" + u + ", r=" + r + ", i=" + i);
+        var result = ohmsLaw.solve(calculateFor, u, r, i)
         for (key in result) {
             var value = result[key]
             switch(key) {
                 case "u": inputU.val(value); break
                 case "r": inputR.val(Math.round(value)); break
                 case "i": inputI.val(value); break
+                case "p": p.html(electronics.printPower(value)); break
                 case "formula": 
                     formula.html(value);
-                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("uri-formula")])
+                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("formula")])
                 break
             }
         }
@@ -56,20 +58,21 @@ jQuery(document).ready(function() {
         inputU.attr("readonly", calculateFor == "u")
         inputR.attr("readonly", calculateFor == "r")
         inputI.attr("readonly", calculateFor == "i")
+        updateCalculations()
     }
 
-    inputU.keyup(updateUri)
-    inputR.keyup(updateUri)
-    inputI.keyup(updateUri)
+    inputU.keyup(updateCalculations)
+    inputR.keyup(updateCalculations)
+    inputI.keyup(updateCalculations)
     jQuery("#uri input[name='calculate-for']").click(updateCalculateFor)
 
-    updateUri()
+    updateCalculations()
     updateCalculateFor()
 })
 </script>
 </head>
 <body>
-    <h2>Ohms Law</h2>
+    <h2>Ohm's Law</h2>
     <form id="uri">
         <table>
             <tr>
@@ -81,27 +84,33 @@ jQuery(document).ready(function() {
             </tr>
             <tr>
                 <td>\(U\)</td>
-                <td><input id="uri-u" name="uri-u" tabindex="1" value="5"/></td>
+                <td><input id="u" name="u" tabindex="1" value="5"/></td>
                 <td>V</td>
                 <td><input type="radio" name="calculate-for" value="u"/></td>
             </tr>
             <tr>
                 <td>\(R\)</td>
-                <td><input id="uri-r" name="uri-r" tabindex="2"/></td>
+                <td><input id="r" name="r" tabindex="2"/></td>
                 <td>&Omega;</td>
                 <td><input type="radio" name="calculate-for" value="r" checked=""/></td>
             </tr>
             <tr>
                 <td>\(I\)</td>
-                <td><input id="uri-i" name="uri-i" tabindex="3" value="10m"/></td>
+                <td><input id="i" name="i" tabindex="3" value="10m"/></td>
                 <td>A</td>
                 <td><input type="radio" name="calculate-for" value="i"/></td>
             </tr>
             <tr>
-                <td colspan="4">Formula: <span id="uri-formula"></span></td>
+                <td colspan="4">
+                    <table>
+                        <tr><td>Formula:</td><td><span id="formula"></span></td></tr>
+                        <tr><td>Power:</td><td><span id="p"></span></td></tr>
+                    </table>
+                </td>
             </tr>
         </table>
     </form>
+    
     <a style="display: none" id="find-resistor" href="">Find suitable resistor</a>
 </body>
 </html>
