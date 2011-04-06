@@ -89,25 +89,28 @@ function Electronics() {
         }
 
         if(value < 1/1000000) {
-            return Math.round(value * 1000000000) + "n" + unit
+            value = Math.round(value * 1000000000) + "n"
         }
-        if(value < 1/1000) {
-            return Math.round(value * 1000000) + "&micro;" + unit
+        else if(value < 1/1000) {
+            value = Math.round(value * 1000000) + "&micro;"
         }
-        if(value < 1) {
-            return Math.round(value * 1000) + "m" + unit
+        else if(value < 1) {
+            value = Math.round(value * 1000) + "m"
         }
-        if(value > 1000000000) {
-            return Math.round(value / 1000000000) + "G" + unit
+        else if(value > 1000000000) {
+            value = Math.round(value / 1000000000) + "G"
         }
-        if(value > 1000000) {
-            return Math.round(value / 1000000) + "M" + unit
+        else if(value > 1000000) {
+            value = Math.round(value / 1000000) + "M"
         }
-        if(value > 1000) {
-            return Math.round(value / 1000) + "k" + unit
+        else if(value > 1000) {
+            value = Math.round(value / 1000) + "k"
+        }
+        else {
+            value = value.toPrecision(3)
         }
 
-        return "\\(" + value.toPrecision(3) + unit + "\\)"
+        return "\\(" + value + unit + "\\)"
     }
 
     this.printInRadix = function(value, radix) {

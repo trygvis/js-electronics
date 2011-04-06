@@ -40,16 +40,19 @@ jQuery(document).ready(function() {
         for (key in result) {
             var value = result[key]
             switch(key) {
-                case "u": inputU.val(value); break
-                case "r": inputR.val(Math.round(value)); break
-                case "i": inputI.val(value); break
+                case "u": u = value, inputU.val(value); break
+                case "r": r = value, inputR.val(Math.round(value)); break
+                case "i": i = value, inputI.val(value); break
                 case "p": p.html(electronics.printPower(value)); break
-                case "formula": 
-                    formula.html(value);
-                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,document.getElementById("formula")])
-                break
+                case "formula": formula.html(value); break
             }
         }
+
+        findResistorA.
+            attr("href", "find-resistor.html?" + "u=" + (isNaN(u) ? "" : u) + "&r=" + (isNaN(r) ? "" : r) + "&i=" + (isNaN(i) ? "" : i)).
+            show()
+
+        jQuery("update-mathjax").each(function(e)) { MathJax.Hub.Queue(["Typeset",MathJax.Hub,e.id) })
     }
 
     function updateCalculateFor() {
@@ -103,8 +106,8 @@ jQuery(document).ready(function() {
             <tr>
                 <td colspan="4">
                     <table>
-                        <tr><td>Formula:</td><td><span id="formula"></span></td></tr>
-                        <tr><td>Power:</td><td><span id="p"></span></td></tr>
+                        <tr><td>Formula:</td><td><span id="formula" class="update-mathjax"></span></td></tr>
+                        <tr><td>Power:</td><td><span id="p" class="update-mathjax"></span></td></tr>
                     </table>
                 </td>
             </tr>

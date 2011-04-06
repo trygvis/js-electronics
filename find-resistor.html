@@ -58,6 +58,8 @@ jQuery(document).ready(function() {
             closestLowerCurrent.html(electronics.printAmpere(ohmsLaw.solve("i", u, l, 0)["i"]))
             closestHigherCurrent.html(electronics.printAmpere(ohmsLaw.solve("i", u, h, 0)["i"]))
         }
+
+        jQuery(".update-mathjax").each(function(i, e) { MathJax.Hub.Queue(["Typeset", MathJax.Hub, e]) } )
     }
 
     inputR.keyup(updateFields)
@@ -81,8 +83,8 @@ jQuery(document).ready(function() {
 <form>
 The target resistance: <input id="r" name="r" value="105"/>&Omega;<br/>
 <ul>
-    <li>Closest lower: <span class="closest-lower">-</span></li>
-    <li>Closest higher: <span class="closest-higher">-</span></li>
+    <li>Closest lower: <span class="update-mathjax closest-lower">-</span></li>
+    <li>Closest higher: <span class="update-mathjax closest-higher">-</span></li>
 </ul>
 Resistor table: E12
 <hr/>
@@ -91,8 +93,8 @@ If you know the voltage over the resistor, calculate the current:
 </p>
 \(U\)=<input id="u" name="u" value="5"/>V
 <ul>
-    <li><span id="closest-lower-current">-</span> at <span class="closest-lower">-</span></li>
-    <li><span id="closest-higher-current">-</span> at <span class="closest-higher">-</span></li>
+    <li><span id="closest-lower-current" class="update-mathjax">-</span> at <span class="update-mathjax closest-lower">-</span></li>
+    <li><span id="closest-higher-current" class="update-mathjax">-</span> at <span class="update-mathjax closest-higher">-</span></li>
 </ul>
 <hr/>
 <p>
@@ -100,26 +102,9 @@ If you know the current through the resistor, calculate the voltage drop:
 </p>
 \(I\)=<input id="i" name="i"/>A
 <ul>
-    <li><span id="closest-lower-voltage">-</span> at <span class="closest-lower">-</span></li>
-    <li><span id="closest-higher-voltage">-</span> at <span class="closest-higher">-</span></li>
+    <li><span id="closest-lower-voltage" class="update-mathjax">-</span> at <span class="update-mathjax closest-lower">-</span></li>
+    <li><span id="closest-higher-voltage" class="update-mathjax">-</span> at <span class="update-mathjax closest-higher">-</span></li>
 </ul>
-        <!--
-        <td>V@<span id="closest-current"></span></td>
-        <td>A@<span id="closest-voltage"></span></td>
-
-        <td>Lower</td>
-        <td></td>
-        <td> =&gt; </td>
-        <td></td>
-        <td><span id="closest-lower-current">-</span></td>
-
-        <td>Higher</td>
-        <td></td>
-        <td> =&gt; </td>
-        <td></td>
-        <td><span id="closest-higher-current">-</span></td>
-        -->
-
 </form>
 </body>
 </html>
