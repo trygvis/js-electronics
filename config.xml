@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <widget xmlns = "http://www.w3.org/ns/widgets"
+
+        xmlns:gap   = "http://phonegap.com/ns/1.0"
+        id          = "duque.johan.CalculosResistencias"
+        version     = "1.0.0"
+        versionCode = "10" >
+
+        <!-- versionCode is optional and Android only -->
+
+        <preference name="phonegap-version" value="3.1.0" />
+		<preference name="phonegap-version" value="3.1.0" />
+		<preference name="fullscreen" value="true" />
+        <name>Calculo resistencias</name>
+        <description>
+        	Soy un archivo de configuración y esta se supone que debería ser la descripción 
+        </description>
+
+        <author href="https://www.facebook.com/johandroid" email="johan.duque@gmail.com">
+        	Johan Alexis Duque Cadena
+        </author>
+		<gap:platform name="android" />
+
+    </widget>

@@ -1,14 +1,367 @@
 <html>
 <head>
     <title>Electronics Calculator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/estilo.css" type="text/css">
+	<link rel="stylesheet" href="css/jQueryMobile.css" type="text/css">
+	<script src="js/jQuery.js"></script>
+	<script src="js/jQueryMobile.js"></script>
 </head>
-<body>
-<h1>Electronics Calculator</h1>
-You better have JavaScript enabled ;)
-<ul>
-<li><a href="ohm.html">Ohm's law</a></li>
-<li><a href="find-resistor.html">Find the best resistor</a></li>
-<li><a href="number-converter.html">Number converter</a></li>
+<body >
+<!-- > Pagina inicial </-->
+<div data-role="page" id="main" data-theme="a">
+<h1 align="center" data-role="header" style="margin:25px;height=30px;font-size:20pt;width: 100%;margin-left: 0;">Electronics Calculator</h1>
+<ul data-role="content" style="margin:25px;">
+<li><a href="#ohm" data-role="button" data-transition="pop">Ohm's law</a></li>
+<li><a href="#find" data-role="button" data-transition="pop">Find the best resistor</a></li>
+<li><a href="#converter" data-role="button" data-transition="pop">Number converter</a></li>
 </ul>
+<div align="center" data-role="footer" style="margin: 25px;position: fixed;bottom: -25px;width: 100%;left: -25px;">
+	<strong>Improved By -> JohanDroid</strong>
+</div>
+</div>
+
+<!-- > Fin Pagina Inicial e inicio de Ohms Law</-->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<!--
+<script type="text/javascript" src="jquery-1.5.2.js"></script>
+<script type="text/javascript" src="mathjax-MathJax-5a7e4d7/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+-->
+<script type="text/javascript" src="functional.min.js"></script>
+<script type="text/javascript" src="electronics-calculator.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var electronics = new Electronics()
+    var resistorCalculator = new ResistorCalculator()
+    var ohmsLaw = new OhmsLaw()
+
+    var inputU = jQuery("#u")
+    var inputR = jQuery("#r")
+    var inputI = jQuery("#i")
+    var p = jQuery("#p")
+
+    var formula = jQuery("#formula")
+
+    var findResistorA = jQuery("#find-resistor")
+
+    var updateCalculations = function() {
+        calculateFor = jQuery("#uri :checked").val()
+        var u = electronics.parseV(inputU.val())
+        var r = electronics.parseR(inputR.val())
+        var i = electronics.parseA(inputI.val())
+
+        console.log("Ohms law: solving for " + calculateFor + ", inputs: u=" + u + ", r=" + r + ", i=" + i);
+        var result = ohmsLaw.solve(calculateFor, u, r, i)
+        for (key in result) {
+            var value = result[key]
+            switch(key) {
+                case "u": u = value, inputU.val(value); break
+                case "r": r = value, inputR.val(Math.round(value)); break
+                case "i": i = value, inputI.val(value); break
+                case "p": p.html(electronics.printPower(value)); break
+                case "formula": formula.html(value); break
+            }
+        }
+
+        findResistorA.
+            //attr("href", "#find-resistor?" + "u=" + (isNaN(u) ? "" : u) + "&r=" + (isNaN(r) ? "" : r) + "&i=" + (isNaN(i) ? "" : i)).
+			attr("href", "#find-resistor").
+            show()
+
+        jQuery("update-mathjax").each(function(e) { MathJax.Hub.Queue(["Typeset"],MathJax.Hub,e.id )})
+    }
+
+    function updateCalculateFor() {
+        calculateFor = jQuery("#uri :checked").val()
+
+        inputU.attr("readonly", calculateFor == "u")
+        inputR.attr("readonly", calculateFor == "r")
+        inputI.attr("readonly", calculateFor == "i")
+        updateCalculations()
+    }
+
+    inputU.keyup(updateCalculations)
+    inputR.keyup(updateCalculations)
+    inputI.keyup(updateCalculations)
+    jQuery("#uri input[name='calculate-for']").click(updateCalculateFor)
+
+    updateCalculations()
+    updateCalculateFor()
+})
+</script>
+<div data-role="page" id="ohm">
+<h2 data-role="header" align="center">Ohm's Law</h2>
+<div data-role="content">
+    <form id="uri">
+        <table>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Calculate for</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>\(U\)</td>
+                <td><input id="u" name="u" tabindex="1" value="5"/></td>
+                <td>V</td>
+                <td><input type="radio" name="calculate-for" value="u"/></td>
+            </tr>
+            <tr>
+                <td>\(R\)</td>
+                <td><input id="r" name="r" tabindex="2"/></td>
+                <td>&Omega;</td>
+                <td><input type="radio" name="calculate-for" value="r" checked=""/></td>
+            </tr>
+            <tr>
+                <td>\(I\)</td>
+                <td><input id="i" name="i" tabindex="3" value="10m"/></td>
+                <td>A</td>
+                <td><input type="radio" name="calculate-for" value="i"/></td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table>
+                        <tr><td>Formula:</td><td><span id="formula" class="update-mathjax"></span></td></tr>
+                        <tr><td>Power:</td><td><span id="p" class="update-mathjax"></span></td></tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+    
+    <a style="display: none" id="find-resistor" href="#find" data-role="button">Find suitable resistor</a>
+	<a href="#main" data-role="button">Back to the Future</a>
+	</div>
+	<div align="center" data-role="footer" style="margin: 25px;position: fixed;bottom: -25px;width: 100%;left: -25px;">
+	<strong>Improved By -> JohanDroid</strong>
+</div>
+</div>
+<!-->Fin de Ohm e inicio de Find</-->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" src="functional.min.js"></script>
+<script type="text/javascript" src="electronics-calculator.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var electronics = new Electronics()
+    var resistorCalculator = new ResistorCalculator()
+    var ohmsLaw = new OhmsLaw()
+
+    var inputR = jQuery("#r")
+    var inputU = jQuery("#u")
+    var inputI = jQuery("#i")
+
+    var closestLower = jQuery(".closest-lower")
+    var closestHigher = jQuery(".closest-higher")
+    var closestVoltage = jQuery("#closest-voltage")
+    var closestCurrent = jQuery("#closest-current")
+    var closestLowerVoltage = jQuery("#closest-lower-voltage")
+    var closestLowerCurrent = jQuery("#closest-lower-current")
+    var closestHigherVoltage = jQuery("#closest-higher-voltage")
+    var closestHigherCurrent = jQuery("#closest-higher-current")
+
+    var updateFields = function() {
+        r = electronics.parseR(inputR.val())
+        u = electronics.parseV(inputU.val())
+        i = electronics.parseA(inputI.val())
+        if(isNaN(r)) {
+            return
+        }
+
+        var closest = resistorCalculator.findClosest(r)
+        var l = closest[0]
+        var h = closest[1]
+        closestLower.html(electronics.printResistance(l))
+        closestHigher.html(electronics.printResistance(h))
+
+        if(!isNaN(i)) {
+            closestCurrent.html(electronics.printAmpere(i))
+            closestLowerVoltage.html(electronics.printVoltage(ohmsLaw.solve("u", 0, l, i)["u"]))
+            closestHigherVoltage.html(electronics.printVoltage(ohmsLaw.solve("u", 0, h, i)["u"]))
+        }
+
+        if(!isNaN(u)) {
+            closestVoltage.html(electronics.printVoltage(u))
+            closestLowerCurrent.html(electronics.printAmpere(ohmsLaw.solve("i", u, l, 0)["i"]))
+            closestHigherCurrent.html(electronics.printAmpere(ohmsLaw.solve("i", u, h, 0)["i"]))
+        }
+
+        jQuery(".update-mathjax").each(function(i, e) { MathJax.Hub.Queue(["Typeset", MathJax.Hub, e]) } )
+    }
+
+    inputR.keyup(updateFields)
+    inputU.keyup(updateFields)
+    inputI.keyup(updateFields)
+
+    // Load the form from the query
+    r = electronics.queryParams["r"]
+    u = electronics.queryParams["u"]
+    i = electronics.queryParams["i"]
+    if(!isNaN(r)) inputR.val(r)
+    if(!isNaN(u)) inputU.val(u)
+    if(!isNaN(i)) inputI.val(i)
+
+    updateFields()
+})
+</script>
+<div data-role="page" id="find">
+<h1 data-role="header">Find Best Resistor</h1>
+<div data-role="content">
+<form>
+The target resistance: <input id="r" name="r" value="105"/>&Omega;<br/>
+<ul>
+    <li>Closest lower: <span class="update-mathjax closest-lower">-</span></li>
+    <li>Closest higher: <span class="update-mathjax closest-higher">-</span></li>
+</ul>
+Resistor table: E12
+<hr/>
+<p>
+If you know the voltage over the resistor, calculate the current:
+</p>
+\(U\)=<input id="u" name="u" value="5"/>V
+<ul>
+    <li><span id="closest-lower-current" class="update-mathjax">-</span> at <span class="update-mathjax closest-lower">-</span></li>
+    <li><span id="closest-higher-current" class="update-mathjax">-</span> at <span class="update-mathjax closest-higher">-</span></li>
+</ul>
+<hr/>
+<p>
+If you know the current through the resistor, calculate the voltage drop:
+</p>
+\(I\)=<input id="i" name="i"/>A
+<ul>
+    <li><span id="closest-lower-voltage" class="update-mathjax">-</span> at <span class="update-mathjax closest-lower">-</span></li>
+    <li><span id="closest-higher-voltage" class="update-mathjax">-</span> at <span class="update-mathjax closest-higher">-</span></li>
+</ul>
+</form>
+<a href="#main" data-role="button">Back to the Future</a>
+</div>
+</div>
+<!--> Fin de find e inicio de converter</-->
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var electronics = new Electronics()
+
+    var number = jQuery("#number")
+    var binary = jQuery("#binary")
+    var octal = jQuery("#octal")
+    var decimal = jQuery("#decimal")
+    var hex = jQuery("#hex")
+
+    parseField = function(v) {
+        if(v.match(/^0b/i)) {
+            return electronics.parseBinary(v.substr(2))
+        }
+        else if(v.match(/b$/i)) {
+            return electronics.parseBinary(v.substr(0, v.length - 1))
+        }
+        else if(v.match(/^0x/i)) {
+            return electronics.parseHex(v.substr(2))
+        }
+        else if(v.match(/h$/i)) {
+            return electronics.parseHex(v.substr(0, v.length - 1))
+        }
+        else if(v.match(/^0o/i)) {
+            return electronics.parseOctal(v.substr(2))
+        }
+        else if(v.match(/^0/i)) {
+            return electronics.parseOctal(v.substr(1))
+        }
+        else if(v.match(/o$/i)) {
+            return electronics.parseOctal(v.substr(0, v.length - 1))
+        }
+        else if(v.match(/^[0-9]*$/)) {
+            return parseInt(v)
+        }
+        else {
+            return NaN
+        }
+    }
+
+    updateFields = function() {
+        var value = parseField(number.val())
+
+        if(isNaN(value)) {
+            binary.html("")
+            octal.html("")
+            decimal.html("")
+            hex.html("")
+        }
+        else {
+            binary.html(electronics.printBinary(value))
+            octal.html(electronics.printOctal(value))
+            decimal.html(value)
+            hex.html(electronics.printHex(value))
+        }
+    }
+
+    number.keyup(updateFields)
+    number.val(electronics.queryParams["number"])
+    updateFields()
+})
+</script>
+
+<div data-role="page" id="converter">
+<h1 data-role="header">Number Converter</h1>
+<div data-role="content">
+<p>
+<form>
+<input id="number" name="number"/>
+</form>
+</p>
+<table>
+    <tr>
+        <td>Binary</td>
+        <td><span id="binary"/></td>
+    </tr>
+    <tr>
+        <td>Octal</td>
+        <td><span id="octal"></span></td>
+    </tr>
+    <tr>
+        <td>Decimal</td>
+        <td><span id="decimal"/></td>
+    </tr>
+    <tr>
+        <td>Hex</td>
+        <td><span id="hex"/></td>
+    </tr>
+</table>
+<p>
+The input number is parsed in the following sequence
+</p>
+<p>
+A number is parsed as binary if:
+<ul>
+    <li>it starts with "0b" or,</li>
+    <li>it ends with "b"</li>
+</ul>
+A number is parsed as hexadecimal if:
+<ul>
+    <li>it starts with "0h" or,</li>
+    <li>it ends with "h"</li>
+</ul>
+A number is parsed as octal if:
+<ul>
+    <li>it starts with "0o" or,</li>
+    <li>it starts with "0" or,</li>
+    <li>it ends with "o"</li>
+</ul>
+A number is parsed as decimal if it consists of only digits.
+</p>
+<a href="#main" data-role="button" data-transition="pop">Back to the Future</a>
+</div>
+<div data-role="footer" align="center"> Toma Ya¡¡¡</div>
+</div>
 </body>
 </html>
